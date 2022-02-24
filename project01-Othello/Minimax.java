@@ -11,7 +11,7 @@ public class Minimax implements IOthelloAI {
 
     public Position minimaxSearch(GameState s){
         Pair doMove = maxValue(s);
-        System.out.println("found this move: "+doMove);
+        System.out.println("found this move: "+doMove.pos);
         if (doMove.pos == null) return new Position(-1,-1);
         else return doMove.pos;
     }
@@ -22,10 +22,10 @@ public class Minimax implements IOthelloAI {
         if(s.isFinished() == true)return curr;
 
         for (var a : s.legalMoves()){
-            curr = new Pair(findCapScore(s, a), a);
+            curr = new Pair(findCapScore(s, a), a); //im not sure about this
             Pair min = minValue(s);
-            if(min.score > curr.score){
-                curr = min;
+            if(min.score > curr.score){ //im not sure about this
+                curr = min; //im not sure about this
             }
         }
         return curr;
@@ -37,10 +37,10 @@ public class Minimax implements IOthelloAI {
             return curr;
         }
         for (var a : s.legalMoves()){
-            curr = new Pair(findCapScore(s, a), a);
+            curr = new Pair(findCapScore(s, a), a);//im not sure about this
             Pair max = maxValue(s);
-            if(max.score > curr.score){
-                curr = max;
+            if(max.score < curr.score){ //im not sure about this
+                curr = max; //im not sure about this
             }
         }
         return curr;
