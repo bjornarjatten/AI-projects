@@ -82,6 +82,10 @@ nb-configuration.xml
 ## OS X
 ##############################
 .DS_Store
+
+##############################
+## Customs
+##############################
 .vs/AI-projects/v16/.suo
 .vs/VSWorkspaceState.json
 .vs/slnx.sqlite
