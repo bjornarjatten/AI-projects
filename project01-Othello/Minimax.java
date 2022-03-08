@@ -1,10 +1,118 @@
-
+import java.util.ArrayList;
 
 public class Minimax implements IOthelloAI {
 
+    public int player;
+
     public Position decideMove(GameState s){
-        Position firstLegal = s.legalMoves().get(0);
-        Position movePosition = minimaxSearch(s);
+        return minimaxSearch(s);
+    }
+
+    public Position minimaxSearch(GameState s){
+        player = s.getPlayerInTurn();
+        Pair valueMove = maxValue(s);
+
+        return valueMove.move;
+    }
+
+    public Pair maxValue(GameState s){
+        if(s.isFinished()){
+            return new Pair(s.countTokens()[player], null);
+        }
+
+        Pair vMove = new Pair(Integer.MIN_VALUE, null);
+
+        for(Position p: s.legalMoves()){
+            s.insertToken(p);
+            Pair vMove2 = minValue(s);
+
+            if(vMove2.utility > vMove.utility){
+                vMove = new Pair(vMove2.utility, vMove.move);
+            }
+        }
+
+        System.out.println(vMove.move.toString());
+
+        return vMove;
+    }
+
+    public Pair minValue(GameState s){
+        if(s.isFinished()){
+            return new Pair(s.countTokens()[player], null);
+        }
+
+        Pair vMove = new Pair(Integer.MAX_VALUE, null);
+
+        for(Position p: s.legalMoves()){
+            s.insertToken(p);
+            Pair vMove2 = maxValue(s);
+
+            if(vMove2.utility < vMove.utility){
+                vMove = new Pair(vMove2.utility, vMove.move);
+            }
+        }
+
+        System.out.println(vMove.move.toString());
+
+        return vMove;
+    }
+
+/*     public int getValue(GameState s, Position p){
+        int possibleScore = 0;
+
+        possibleScore =+ s.captureInDirection(p, 1, 0);
+        possibleScore =+ s.captureInDirection(p, -1, 0);
+        possibleScore =+ s.captureInDirection(p, 0, 1);
+        possibleScore =+ s.captureInDirection(p, 0, -1);
+        possibleScore =+ s.captureInDirection(p, 1, 1);
+        possibleScore =+ s.captureInDirection(p, -1, -1);
+        possibleScore =+ s.captureInDirection(p, 1, -1);
+        possibleScore =+ s.captureInDirection(p, -1, 1);
+        possibleScore =+ s.captureInDirection(p, 0, 0);
+
+        return possibleScore;
+    }
+
+    public Pair getLowestLegalMove(GameState s){
+        Pair lowestScorePosition;
+
+        if(s.legalMoves().size() == 0){
+            lowestScorePosition = new Pair(0, null);
+        }else{
+            lowestScorePosition = new Pair(getValue(s, s.legalMoves().get(0)), s.legalMoves().get(0));
+        }
+
+        for(Position p: s.legalMoves()){
+            if(getValue(s, p) < lowestScorePosition.utility){
+                lowestScorePosition = new Pair(getValue(s, p), p);
+            }
+        }
+
+        return lowestScorePosition;
+    }
+
+    public Pair getGreatestLegalMove(GameState s){
+        Pair greatestScorePosition;
+
+        if(s.legalMoves().size() == 0){
+            greatestScorePosition = new Pair(0, null);
+        }else{
+            greatestScorePosition = new Pair(getValue(s, s.legalMoves().get(0)), s.legalMoves().get(0));
+        }
+
+        for(Position p: s.legalMoves()){
+            if(getValue(s, p) > greatestScorePosition.utility){
+                greatestScorePosition = new Pair(getValue(s, p), p);
+            }
+        }
+
+        return greatestScorePosition;
+    }
+ */
+     
+/*     public Position decideMove(GameState s){
+        Position firstLegal = s.legalMoves().get(0); */
+/*         Position movePosition = minimaxSearch(s);
         System.out.println("Trying this move: "+ movePosition);
         System.out.println("this is first move in legal: " + firstLegal);
         System.out.println(s.legalMoves().contains(movePosition));
@@ -57,6 +165,6 @@ public class Minimax implements IOthelloAI {
         //should maybe be the diffrence between the two players, and not just the respective players score as here ?
         int currScore = temp[turn];
         return currScore;
-    }
+    } */
     
 }
