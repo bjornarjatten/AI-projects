@@ -10,49 +10,53 @@ public class Minimax implements IOthelloAI {
 
     public Position minimaxSearch(GameState s){
         player = s.getPlayerInTurn();
-        Pair valueMove = maxValue(s);
+        Pair valueMove = maxValue(s, null);
 
         return valueMove.move;
     }
 
-    public Pair maxValue(GameState s){
+    public Pair maxValue(GameState s, Position pos){
         if(s.isFinished()){
-            return new Pair(s.countTokens()[player], null);
+            return new Pair(s.countTokens()[player], pos);
         }
 
         Pair vMove = new Pair(Integer.MIN_VALUE, null);
 
         for(Position p: s.legalMoves()){
             s.insertToken(p);
-            Pair vMove2 = minValue(s);
-
+            Pair vMove2 = minValue(s, p);
+            
             if(vMove2.utility > vMove.utility){
                 vMove = new Pair(vMove2.utility, vMove.move);
             }
         }
 
-        System.out.println(vMove.move.toString());
+        if(vMove.move != null){
+            System.out.println(vMove.move.toString());
+        }
 
         return vMove;
     }
 
-    public Pair minValue(GameState s){
+    public Pair minValue(GameState s, Position pos){
         if(s.isFinished()){
-            return new Pair(s.countTokens()[player], null);
+            return new Pair(s.countTokens()[player], pos);
         }
 
         Pair vMove = new Pair(Integer.MAX_VALUE, null);
 
         for(Position p: s.legalMoves()){
             s.insertToken(p);
-            Pair vMove2 = maxValue(s);
+            Pair vMove2 = maxValue(s, p);
 
             if(vMove2.utility < vMove.utility){
                 vMove = new Pair(vMove2.utility, vMove.move);
             }
         }
 
-        System.out.println(vMove.move.toString());
+        if(vMove.move != null){
+            System.out.println(vMove.move.toString());
+        }
 
         return vMove;
     }
