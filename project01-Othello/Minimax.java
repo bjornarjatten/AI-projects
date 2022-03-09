@@ -1,62 +1,50 @@
 
 
 public class Minimax implements IOthelloAI {
+private int player;
 
     public Position decideMove(GameState s){
-        Position firstLegal = s.legalMoves().get(0);
-        Position movePosition = minimaxSearch(s);
-        System.out.println("Trying this move: "+ movePosition);
-        System.out.println("this is first move in legal: " + firstLegal);
-        System.out.println(s.legalMoves().contains(movePosition));
+        player = s.getPlayerInTurn();
+        Position movePosition = maxValue(s, null).pos;
         return movePosition;
     }
 
-    public Position minimaxSearch(GameState s){
-        Pair doMove = maxValue(s);
-        System.out.println("found this move: "+ doMove.pos);
-        if (doMove.pos == null) return new Position(-1,-1);
-        else return doMove.pos;
-    }
-
-    public Pair maxValue(GameState s){
-        Pair curr = new Pair(0, null);
-
-        if(s.isFinished() == true) return curr;
-
-        for (var a : s.legalMoves()){
-            curr = new Pair(findCapScore(s, a), a);
-            s.insertToken(a);
-            Pair min = minValue(s);
-            if(min.score > curr.score){
-                curr = min; 
+    public Pair maxValue(GameState s, Position pos){
+        if(s.isFinished()) return new Pair(findScore(s), pos);
+        Pair curr  = new Pair(findScore(s), pos);
+        for (Position p : s.legalMoves()){
+            Pair v2a2 = minValue(result(s, p), curr.pos);
+            if (v2a2.score > curr.score){
+                curr = new Pair(v2a2.score, p);
             }
-        }
+        } 
         return curr;
     }
 
-    public Pair minValue(GameState s){
-        Pair curr = new Pair(0, null);
-        if(s.isFinished() == true) return curr;
-
-        for (var a : s.legalMoves()){
-            curr = new Pair(findCapScore(s, a), a);
-            s.insertToken(a);
-            Pair max = maxValue(s);
-            if(max.score < curr.score){
-                curr = max; 
+    public Pair minValue(GameState s, Position pos){
+        if(s.isFinished()) return new Pair(findScore(s), pos);
+        Pair curr  = new Pair(findScore(s), pos);
+        for (Position p : s.legalMoves()){
+            Pair v2a2 = maxValue(result(s, p), curr.pos);
+            if (v2a2.score < curr.score){
+                curr = new Pair(v2a2.score, p);
             }
-        }
+        } 
         return curr;
     }
 
-    //finde score based on a move, in relation to the amount of tokens each player would have
-    public int findCapScore(GameState s, Position p ){
-        int turn = s.getPlayerInTurn()-1;
-        s.insertToken(p);
-        int[] temp = s.countTokens();
-        //should maybe be the diffrence between the two players, and not just the respective players score as here ?
-        int currScore = temp[turn];
-        return currScore;
+
+    //find the socre of the current game state
+    private int findScore(GameState s){
+        int[] Scores = s.countTokens();
+        if(player == 1) return Scores[0] - Scores[1];
+        else return Scores[1] - Scores[0];
+    }
+
+    private GameState result(GameState s, Position p){
+        GameState t = new GameState(s.getBoard(),s.getPlayerInTurn());
+        t.insertToken(p);
+        return t;
     }
     
 }
