@@ -1,17 +1,11 @@
-import java.util.ArrayList;
-
 public class MinimaxV2 implements IOthelloAI {
     private int player;
-
-    private final int depth = 5;
+    private final int depth = 3;
 
     public Position decideMove(GameState s){
         player = s.getPlayerInTurn();
-        ArrayList<Position> moves = s.legalMoves();
-        if (!moves.isEmpty()) {
-            return minimaxSearch(s);
-        }else 
-            return new Position(-1,-1);
+        if (!s.legalMoves().isEmpty()) return minimaxSearch(s);
+            else return new Position(-1,-1);
     }
     
     
@@ -19,8 +13,7 @@ public class MinimaxV2 implements IOthelloAI {
         Position bestMove = null;
         int bestValue = Integer.MIN_VALUE;
         for(Position p : s.legalMoves()){
-            int step = 0;
-            int temp = minValue(result(s, p), Integer.MIN_VALUE, Integer.MAX_VALUE, step);
+            int temp = minValue(result(s, p), Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
             if (temp >= bestValue){
                 bestMove = p;
                 bestValue = temp;
@@ -34,9 +27,7 @@ public class MinimaxV2 implements IOthelloAI {
         int v = Integer.MIN_VALUE;
         for(Position p : s.legalMoves()){
             v = Math.max(v, minValue(result(s, p), alpha, beta, step));
-            if (v >= beta){
-                return v;
-            } 
+            if (v >= beta) return v;
             alpha = Math.max(alpha, v);
         }
         return v;
@@ -47,9 +38,7 @@ public class MinimaxV2 implements IOthelloAI {
         int v = Integer.MAX_VALUE;
         for(Position p : s.legalMoves()){
             v = Math.min(v, maxValue(result(s, p), alpha, beta, step+1));
-            if (v <= alpha){
-                return v;
-            } 
+            if (v <= alpha) return v;
             beta = Math.min(beta, v);
         }
         return v;
