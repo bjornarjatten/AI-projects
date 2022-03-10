@@ -1,5 +1,4 @@
 public class MinimaxV2 implements IOthelloAI {
-    //cant currently go first
     private int player;
 
     public Position decideMove(GameState s){
@@ -10,7 +9,7 @@ public class MinimaxV2 implements IOthelloAI {
     
     
     public Position minimaxSearch(GameState s){
-        Position bestMove = new Position(-1,-1);;
+        Position bestMove = s.legalMoves().get(0);
         int bestValue = -9999;
         for(Position p : s.legalMoves()){
             int temp = minValue(result(s, p));
