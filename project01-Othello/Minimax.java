@@ -2,7 +2,7 @@ public class Minimax implements IOthelloAI {
 // int to state what side is using the minimax
 private int player;
 // the limit to what depth the ai is allowed to look forward
-private int depth = 5; // >=5 seems optimal, 6 works but some long load times, 7 is slow AF
+private int depth = 7; // <= 7 can be played at 8 but will have loading times upwards the 10 sec limit
 
     public Position decideMove(GameState s){
         player = s.getPlayerInTurn();
@@ -31,7 +31,7 @@ private int depth = 5; // >=5 seems optimal, 6 works but some long load times, 7
         if (s.isFinished()|| step >= depth) return new Pair(findScore(s), null);
         int v = Integer.MAX_VALUE;
         for(Position p : s.legalMoves()){
-            Pair v2a2 = minValue(result(s, p), p, step+1, alpha, beta);
+            Pair v2a2 = maxValue(result(s, p), p, step+1, alpha, beta);
             if (v2a2.score < v){
                 v = v2a2.score;
                 pos = p;
