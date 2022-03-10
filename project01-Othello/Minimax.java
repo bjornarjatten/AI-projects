@@ -1,5 +1,3 @@
-import java.applet.Applet;
-
 public class Minimax implements IOthelloAI {
 // int to state what side is using the minimax
 private int player;
