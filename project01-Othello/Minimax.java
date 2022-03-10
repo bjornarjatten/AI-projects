@@ -56,7 +56,7 @@ private int depth = 5;
                 return curr;
             }
     
-            beta = Math.max(beta, curr.score);
+            beta = Math.min(beta, curr.score);
         } 
         return curr;
     }
