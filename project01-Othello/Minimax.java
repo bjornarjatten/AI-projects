@@ -2,18 +2,14 @@ public class Minimax implements IOthelloAI {
 // int to state what side is using the minimax
 private int player;
 // the limit to what depth the ai is allowed to look forward
-private int depth = 5;
+private int depth = 5; // >=5 seems optimal, 6 works but some long load times, 7 is slow AF
 
     public Position decideMove(GameState s){
-        return alphaBetaSearch(s);
-    }
-
-    public Position alphaBetaSearch (GameState s){
         player = s.getPlayerInTurn();
-        Position temp = s.legalMoves().get(0);
-        if(!s.legalMoves().isEmpty()) return maxValue(s,temp, 0, Integer.MIN_VALUE, Integer.MAX_VALUE).pos;
-        return new Position(-1, -1);
-
+        if(!s.legalMoves().isEmpty()){
+            Position temp = s.legalMoves().get(0);
+            return maxValue(s, temp, 0, Integer.MIN_VALUE, Integer.MAX_VALUE).pos; 
+        } return new Position(-1, -1);
     }
 
     public Pair maxValue(GameState s, Position pos, int step, int alpha, int beta){
@@ -46,11 +42,11 @@ private int depth = 5;
         return new Pair(v, pos);
     }
 
-    //find the socre of the current game state
+    
     private int findScore(GameState s){
         int[] Scores = s.countTokens();
-        if(player == 1) return Scores[0];
-        else return Scores[1];
+        if(player == 1) return Scores[0]-Scores[1];
+        else return Scores[1]-Scores[0];
     }
 
     private GameState result(GameState s, Position p){
