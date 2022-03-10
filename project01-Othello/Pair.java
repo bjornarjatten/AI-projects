@@ -1,9 +1,9 @@
 public class Pair {
-    int score;
+    double utility;
     Position pos;
 
-    public Pair(int score, Position pos){
-        this.score = score;
+    public Pair(int utility, Position pos){
+        this.utility = utility;
         this.pos = pos;
     }
 }

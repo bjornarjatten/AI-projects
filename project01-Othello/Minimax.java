@@ -1,62 +1,80 @@
 
-
 public class Minimax implements IOthelloAI {
 
+    // public Position decideMove(GameState s){
+	// 	ArrayList<Position> moves = s.legalMoves();
+
+	// 	if ( !moves.isEmpty() )
+	// 		return moves.get(0);
+	// 	else
+	// 		return new Position(-1,-1);
+	// }
+
     public Position decideMove(GameState s){
-        Position firstLegal = s.legalMoves().get(0);
+        //Position firstLegal = s.legalMoves().get(0);
         Position movePosition = minimaxSearch(s);
-        System.out.println("Trying this move: "+ movePosition);
-        System.out.println("this is first move in legal: " + firstLegal);
-        System.out.println(s.legalMoves().contains(movePosition));
+        s.insertToken(movePosition);
         return movePosition;
     }
 
     public Position minimaxSearch(GameState s){
-        Pair doMove = maxValue(s);
-        System.out.println("found this move: "+ doMove.pos);
-        if (doMove.pos == null) return new Position(-1,-1);
-        else return doMove.pos;
+        System.out.println("minimax SEARCH");
+        Pair utilityAndPos = maxValue(s);
+        System.out.println("found move with utility: " + utilityAndPos.utility +  ", and pos: " + utilityAndPos.pos);
+        if (utilityAndPos.pos == null) return new Position(-1,-1);
+        else return utilityAndPos.pos;
     }
 
     public Pair maxValue(GameState s){
-        Pair curr = new Pair(0, null);
+        System.out.println("max SEARCH");
+        
 
-        if(s.isFinished() == true) return curr;
+        if(s.isFinished() == true) return new Pair(getResult(s), new Position(-1, -1));
 
+        Pair curr = new Pair(0, new Position(-1, -1));
+        curr.utility = Double.NEGATIVE_INFINITY;
+        curr.utility = findUtilityScore(s, curr.pos);
         for (var a : s.legalMoves()){
-            curr = new Pair(findCapScore(s, a), a);
-            s.insertToken(a);
             Pair min = minValue(s);
-            if(min.score > curr.score){
+            
+            if(min.utility > curr.utility){
                 curr = min; 
             }
         }
+        
         return curr;
     }
 
     public Pair minValue(GameState s){
-        Pair curr = new Pair(0, null);
-        if(s.isFinished() == true) return curr;
+        System.out.println("min SEARCH");
+        
+        if(s.isFinished() == true) return new Pair(getResult(s), new Position(-1, -1));
 
+        Pair curr = new Pair(0, new Position(-1, -1));
+        curr.utility = Double.POSITIVE_INFINITY;
+        curr.utility = findUtilityScore(s, curr.pos);
         for (var a : s.legalMoves()){
-            curr = new Pair(findCapScore(s, a), a);
-            s.insertToken(a);
             Pair max = maxValue(s);
-            if(max.score < curr.score){
+            if(max.utility < curr.utility){
                 curr = max; 
             }
         }
+        
         return curr;
     }
 
-    //finde score based on a move, in relation to the amount of tokens each player would have
-    public int findCapScore(GameState s, Position p ){
-        int turn = s.getPlayerInTurn()-1;
+    public double findUtilityScore(GameState s, Position p ){
+        System.out.println("find utility SCORE");
         s.insertToken(p);
         int[] temp = s.countTokens();
-        //should maybe be the diffrence between the two players, and not just the respective players score as here ?
-        int currScore = temp[turn];
+        int currScore = temp[0]-temp[1];
         return currScore;
+    }
+
+    public int getResult(GameState s){
+        int[] player = s.countTokens();
+        int score = player[0]-player[1];
+        return score;
     }
     
 }
