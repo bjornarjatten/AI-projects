@@ -4,56 +4,47 @@ private int player;
 // the limit to what depth the ai is allowed to look forward
 private int depth = 5;
 
-    /**sets what player is playing with minimax,
-     * then defaults to the first legal move being the best until anouther move is found
-     * initializez the start depth to be 0
-     * then begins looking for the best move by calling maxvalue
-    */
     public Position decideMove(GameState s){
+        return alphaBetaSearch(s);
+    }
+
+    public Position alphaBetaSearch (GameState s){
         player = s.getPlayerInTurn();
-        int step = 0;
-        Position temp =  s.legalMoves().get(0);
-        System.out.println(temp);
-        Pair movePosition = maxValue(s, Integer.MIN_VALUE, Integer.MAX_VALUE, step);
-        return movePosition.pos;
+        Position temp = s.legalMoves().get(0);
+        if(!s.legalMoves().isEmpty()) return maxValue(s,temp, 0, Integer.MIN_VALUE, Integer.MAX_VALUE).pos;
+        return new Position(-1, -1);
+
     }
 
-    /** Mimics the pseudocode from the book
-     * creates a new pair based on the current move
-     * then checks if we have reached our cutoff or the game is finished, if so returns the current move
-     * otherwise we go trough the list of legal moves
-     * calling minvalue on each move and procceding through the game, returning the best score at when a cutoff is reached
-     * this score is then compared to the current moves score and the best move is selected as the new current move
-     */
-    public Pair maxValue(GameState s, int alpha, int beta, int step){
-        if(s.isFinished()|| step >= depth) return new Pair(Integer.MIN_VALUE, null);
-        Pair curPair = new Pair(Integer.MIN_VALUE, null);
-        for(Position a : s.legalMoves()){
-            Pair v2a2 = minValue( result(s, a), alpha, beta, step+1);
-            if(v2a2.score > findScore(s) ){
-                System.out.println("found better option");
-                curPair = new Pair(v2a2.score, a);
-                alpha = Math.max(alpha, curPair.score);
+    public Pair maxValue(GameState s, Position pos, int step, int alpha, int beta){
+        if (s.isFinished()|| step >= depth) return new Pair(findScore(s), null);
+        int v = Integer.MIN_VALUE;
+        for(Position p : s.legalMoves()){
+            Pair v2a2 = minValue(result(s, p), p, step+1, alpha, beta);
+            if (v2a2.score > v){
+                v = v2a2.score;
+                pos = p;
+                alpha = Math.max(alpha, v);
             }
-            if (curPair.score >= beta) return curPair;
+            if (v >= beta) return new Pair(v, pos);
         }
-        return curPair;
+        return new Pair(v, pos);
     }
 
-    public Pair minValue(GameState s, int alpha, int beta, int step){
-        if(s.isFinished()|| step >= depth) return new Pair(Integer.MAX_VALUE, null);
-        Pair curPair = new Pair(Integer.MAX_VALUE, null);
-        for(Position a : s.legalMoves()){
-            Pair v2a2 = maxValue( result(s, a), alpha, beta, step+1);
-            if(v2a2.score < findScore(s) ){
-                curPair = new Pair(v2a2.score, a);
-                beta = Math.min(beta, curPair.score);
+    public Pair minValue(GameState s, Position pos, int step, int alpha, int beta){
+        if (s.isFinished()|| step >= depth) return new Pair(findScore(s), null);
+        int v = Integer.MAX_VALUE;
+        for(Position p : s.legalMoves()){
+            Pair v2a2 = minValue(result(s, p), p, step+1, alpha, beta);
+            if (v2a2.score < v){
+                v = v2a2.score;
+                pos = p;
+                beta = Math.min(beta, v);
             }
-            if (curPair.score <= alpha) return curPair;
+            if (v <= alpha) return new Pair(v, pos);
         }
-        return curPair;
+        return new Pair(v, pos);
     }
-
 
     //find the socre of the current game state
     private int findScore(GameState s){
