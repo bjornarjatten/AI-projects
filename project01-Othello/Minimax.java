@@ -5,7 +5,8 @@ private int player;
 
     public Position decideMove(GameState s){
         player = s.getPlayerInTurn();
-        Position movePosition = maxValue(s, null).pos;
+        Position pos = s.legalMoves().get(0);
+        Position movePosition = maxValue(s, pos).pos;
         return movePosition;
     }
 
