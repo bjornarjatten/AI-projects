@@ -1,4 +1,4 @@
-public class Minimax implements IOthelloAI {
+public class OthelloAI04 implements IOthelloAI {
 
     // int to state what side is using the minimax
 private int player;
