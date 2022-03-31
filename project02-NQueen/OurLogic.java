@@ -8,7 +8,8 @@ public class OurLogic implements IQueensLogic{
     private BDD False;
     private BDD bdd;
 
-    //TO COMPILE US THIS:  javac -cp .\javabdd-1.0b2.jar *.java in vscode
+    //TO COMPILE USE THIS:  javac -cp .\javabdd-1.0b2.jar *.java in vscode
+    //TO RUN USE THIS: java -cp "javabdd-1.0b2.jar;." Queens OurLogic 6 
 
     public void initializeBoard(int size) {
         this.size = size;
