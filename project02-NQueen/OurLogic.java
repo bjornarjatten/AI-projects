@@ -29,7 +29,7 @@ public class OurLogic implements IQueensLogic{
         this.True = this.fac.one();
         this.bdd = True;
         rules();
-        eightRule();
+
         System.out.println("is ready");
     }
 
@@ -45,9 +45,12 @@ public class OurLogic implements IQueensLogic{
 
     private void rules(){
         for(int x = 0; x < size; x++){
+            BDD subBdd = False;
             for(int y = 0; y < size; y++){
                 eval(x,y);
+                subBdd = subBdd.or(this.fac.ithVar(place(x, y)));
             }
+            this.bdd = this.bdd.and(subBdd);
         }
     }
     
@@ -57,29 +60,29 @@ public class OurLogic implements IQueensLogic{
         BDD availableBDD = True;      
         
         //all y = false
-        for(int y2 = 0; y2 < size; y2++){
-            if (y != y2) availableBDD = availableBDD.and(this.fac.nithVar(place(x,y2)));
+        for(int column = 0; column < size; column++){
+            if (y != column) availableBDD = availableBDD.and(this.fac.nithVar(place(x,column)));
         }
 
         //all x = false
-        for(int x2 = 0; x2 < size; x2++){
-            if (x != x2) availableBDD = availableBDD.and(this.fac.nithVar(place(x2,y)));
+        for(int row = 0; row < size; row++){
+            if (x != row) availableBDD = availableBDD.and(this.fac.nithVar(place(row,y)));
         }
     
         // all diagonal left = false 
-        for (int x2 = 0; x2 < size; x2++) {
-            if (x != x2) {
-                if ((y+x2-x < size) && (y+x2-x > 0)) {
-                    availableBDD = availableBDD.and(this.fac.nithVar(place(x2,y+x2-x)));
+        for (int row = 0; row < size; row++) {
+            if (x != row) {
+                if ((y+row-x < size) && (y+row-x > 0)) {
+                    availableBDD = availableBDD.and(this.fac.nithVar(place(row,y+row-x)));
                 }
             }
         }
 
         // all diagonal right = false 
-        for (int x2 = 0; x2 < size; x2++) {
-            if (x != x2) {
-                if ((y-x2+x < size) && (y-x2+x > 0)) {
-                    availableBDD = availableBDD.and(this.fac.nithVar(place(x2,y-x2+x)));
+        for (int row = 0; row < size; row++) {
+            if (x != row) {
+                if ((y-row+x < size) && (y-row+x > 0)) {
+                    availableBDD = availableBDD.and(this.fac.nithVar(place(row,y-row+x)));
                 }
             }
         }
@@ -103,18 +106,37 @@ public class OurLogic implements IQueensLogic{
     }
     
     private void updateboard(){
+        int noQueen = 0;
+
         for(int i = 0; i < size; i++){
             for(int j = 0; j < size; j++){
                 if(isInvalid(i, j)){
                     board[i][j] = -1;
+                }else{
+                    noQueen++;
                 }
             }
         }
+
+        if(noQueen == size){
+            for (int r = 0; r < size; r++) {
+                for (int c = 0; c < size; c++) {
+                    if (board[c][r] != -1) {
+                        board[c][r] = 1;
+                    }
+                }
+            }
+        }
+
+        
     }
 
     public void insertQueen(int column, int row) {
+        if (board[column][row] == -1) return; 
+
         board[column][row] = 1;
         this.bdd = this.bdd.restrict(this.fac.ithVar(row*this.size+column));
+        
         updateboard();
     }    
 }
