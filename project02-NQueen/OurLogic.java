@@ -7,15 +7,18 @@ public class OurLogic implements IQueensLogic{
     private BDD True;
     private BDD False;
     private BDD bdd;
+    private int movesLeft;
 
     //TO COMPILE USE THIS:  javac -cp .\javabdd-1.0b2.jar *.java in vscode
     //TO RUN USE THIS: java -cp "javabdd-1.0b2.jar;." Queens OurLogic 6 
 
     public void initializeBoard(int size) {
         this.size = size;
-        System.out.println("this is size " + size);
+        System.out.println("Queens to place " + size);
         this.board = new int[size][size];
         buildBDD();
+        updateboard();
+        System.out.println("Game is ready");
     }
    
     public int[][] getBoard() {
@@ -29,8 +32,7 @@ public class OurLogic implements IQueensLogic{
         this.True = this.fac.one();
         this.bdd = True;
         rules();
-
-        System.out.println("is ready");
+        eightRule();
     }
 
     private void eightRule(){
@@ -107,7 +109,6 @@ public class OurLogic implements IQueensLogic{
     
     private void updateboard(){
         int noQueen = 0;
-
         for(int i = 0; i < size; i++){
             for(int j = 0; j < size; j++){
                 if(isInvalid(i, j)){
@@ -118,6 +119,7 @@ public class OurLogic implements IQueensLogic{
             }
         }
 
+        movesLeft = noQueen-1;
         if(noQueen == size){
             for (int r = 0; r < size; r++) {
                 for (int c = 0; c < size; c++) {
@@ -127,16 +129,23 @@ public class OurLogic implements IQueensLogic{
                 }
             }
         }
-
         
     }
 
     public void insertQueen(int column, int row) {
-        if (board[column][row] == -1) return; 
+        if (board[column][row] == -1 || board[column][row] == 1){
+            return;
+        } 
 
         board[column][row] = 1;
         this.bdd = this.bdd.restrict(this.fac.ithVar(row*this.size+column));
-        
         updateboard();
+
+        if(movesLeft <= size){
+            System.out.println("No options left, autofilling board");
+        }else{
+            System.out.println("You have "+ movesLeft + " possible options");
+        }
+        
     }    
 }
