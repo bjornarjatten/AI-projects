@@ -2,12 +2,12 @@ import net.sf.javabdd.*;
 
 public class OurLogic implements IQueensLogic{
     private int size;		// Size of quadratic game board (i.e. size = #rows = #columns)
-    private int[][] board;	// Content of the board. Possible values: 0 (empty), 1 (queen), -1 (no queen allowed)
+    private int[][] board;  // Content of the board. Possible values: 0 (empty), 1 (queen), -1 (no queen allowed)
+    private int movesLeft;  // An int to keep track of how many squares a queen can be placed in
     private BDDFactory fac;
     private BDD True;
     private BDD False;
     private BDD bdd;
-    private int movesLeft;
 
     //TO COMPILE USE THIS:  javac -cp .\javabdd-1.0b2.jar *.java in vscode
     //TO RUN USE THIS: java -cp "javabdd-1.0b2.jar;." Queens OurLogic 6 
@@ -27,17 +27,19 @@ public class OurLogic implements IQueensLogic{
         return board;
     }
 
+    //building the BDD and adding Rules
     public void buildBDD(){
+        //creating factory
         this.fac = JFactory.init(2000000, 200000);
         this.fac.setVarNum(this.size*this.size); 
         this.False = this.fac.zero();
         this.True = this.fac.one();
         this.bdd = True;
         rules();
-        eightRule();
     }
 
-    private void eightRule(){
+    // specifying a rule that Each row must contain one queen
+    private void allRowsRule(){
         for(int y = 0; y < size; y++){
             BDD subBdd = False;
             for(int x = 0; x < size; x++){
@@ -47,7 +49,9 @@ public class OurLogic implements IQueensLogic{
         }
     }
 
+    //Assembling the calls to implement rules 
     private void rules(){
+        allRowsRule();
         for(int x = 0; x < size; x++){
             BDD subBdd = False;
             for(int y = 0; y < size; y++){
@@ -59,21 +63,22 @@ public class OurLogic implements IQueensLogic{
     }
     
 
+    //evaluating a given position in relation to its horizontal, vertical and diagnol fields
     private void eval(int x, int y){
         BDD unavailableBDD = False;
         BDD availableBDD = True;      
         
-        //all y = false
+        //all y should be false
         for(int column = 0; column < size; column++){
             if (y != column) availableBDD = availableBDD.and(this.fac.nithVar(place(x,column)));
         }
 
-        //all x = false
+        //all x should false
         for(int row = 0; row < size; row++){
             if (x != row) availableBDD = availableBDD.and(this.fac.nithVar(place(row,y)));
         }
     
-        // all diagonal left = false 
+        // all diagonal left should false 
         for (int row = 0; row < size; row++) {
             if (x != row) {
                 if ((y+row-x < size) && (y+row-x > 0)) {
@@ -82,7 +87,7 @@ public class OurLogic implements IQueensLogic{
             }
         }
 
-        // all diagonal right = false 
+        // all diagonal right should false 
         for (int row = 0; row < size; row++) {
             if (x != row) {
                 if ((y-row+x < size) && (y-row+x > 0)) {
@@ -104,11 +109,14 @@ public class OurLogic implements IQueensLogic{
         return row*this.size+column;
       }
 
+    // checks is a given place is valid or not
     private boolean isInvalid(int column, int row){
         BDD testBDD = this.bdd.restrict(this.fac.ithVar(place(column,row)));
         return testBDD.isZero();
     }
     
+    //runs through the board and and updates the fields in accordance to the rules
+    // additionaly contains a check to autofill the board if no options left
     private void updateboard(){
         int noQueen = 0;
         for(int i = 0; i < size; i++){
