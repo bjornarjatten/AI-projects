@@ -1,5 +1,3 @@
-import javax.sound.midi.Soundbank;
-
 import net.sf.javabdd.*;
 
 public class OurLogic implements IQueensLogic{
