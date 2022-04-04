@@ -1,3 +1,5 @@
+import javax.sound.midi.Soundbank;
+
 import net.sf.javabdd.*;
 
 public class OurLogic implements IQueensLogic{
@@ -14,11 +16,13 @@ public class OurLogic implements IQueensLogic{
 
     public void initializeBoard(int size) {
         this.size = size;
-        System.out.println("Queens to place " + size);
+        System.out.println("Loading");
         this.board = new int[size][size];
         buildBDD();
         updateboard();
-        System.out.println("Game is ready");
+        System.out.println("Game is ready\n");
+        System.out.println("Queens to place " + size);
+        System.out.println("you have " + movesLeft + " options");
     }
    
     public int[][] getBoard() {
@@ -119,7 +123,7 @@ public class OurLogic implements IQueensLogic{
             }
         }
 
-        movesLeft = noQueen-1;
+        movesLeft = noQueen;
         if(noQueen == size){
             for (int r = 0; r < size; r++) {
                 for (int c = 0; c < size; c++) {
@@ -140,7 +144,7 @@ public class OurLogic implements IQueensLogic{
         board[column][row] = 1;
         this.bdd = this.bdd.restrict(this.fac.ithVar(row*this.size+column));
         updateboard();
-
+        movesLeft = movesLeft -1;
         if(movesLeft <= size){
             System.out.println("No options left, autofilling board");
         }else{
