@@ -10,7 +10,7 @@ public class Group04Logic implements IQueensLogic{
     private BDD bdd;
 
     //TO COMPILE USE THIS:  javac -cp .\javabdd-1.0b2.jar *.java in vscode
-    //TO RUN USE THIS: java -cp "javabdd-1.0b2.jar;." Queens OurLogic 6 
+    //TO RUN USE THIS: java -cp "javabdd-1.0b2.jar;." Queens Group04Logic 6 
 
     public void initializeBoard(int size) {
         this.size = size;
