@@ -1,6 +1,6 @@
 import net.sf.javabdd.*;
 
-public class OurLogic implements IQueensLogic{
+public class Group04Logic implements IQueensLogic{
     private int size;		// Size of quadratic game board (i.e. size = #rows = #columns)
     private int[][] board;  // Content of the board. Possible values: 0 (empty), 1 (queen), -1 (no queen allowed)
     private int movesLeft;  // An int to keep track of how many squares a queen can be placed in
